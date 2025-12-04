@@ -1,0 +1,13 @@
+# Entorno virtual
+venv/
+.env
+
+# Base de datos (mejor generarla con seed_data.py que subir el binario)
+*.db
+
+# Archivos compilados de Python (basura)
+__pycache__/
+*.pyc
+
+# Archivos de cache de pytest
+.pytest_cache/
