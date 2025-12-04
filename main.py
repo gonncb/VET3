@@ -35,7 +35,7 @@ class ServiceContainer:
         self.vet_repo = VeterinarioRepository(self.db)
         self.client_repo = ClienteRepository(self.db)
         self.cita_repo = CitaRepository(self.db)
-        self.historial_repo = HistorialRepository(self.db) # <--- NUEVO
+        self.historial_repo = HistorialRepository(self.db) 
         
         # 3. Servicios (Capa de Lógica)
         self.auth_service = AuthService(self.vet_repo)
@@ -45,7 +45,7 @@ class ServiceContainer:
         self.cita_service = CitaService(self.cita_repo, self.vet_repo, self.client_repo)
         
         # El servicio médico necesita acceder al historial y buscar clientes
-        self.medical_service = MedicalService(self.historial_repo, self.client_repo) # <--- NUEVO
+        self.medical_service = MedicalService(self.historial_repo, self.client_repo) 
 
 def main():
     # Instanciamos el contenedor
@@ -97,7 +97,7 @@ def main():
                 n_citas = len(services.cita_service.obtener_historial_citas())
                 st.metric("Citas Agendadas", n_citas)
             with col3:
-                st.metric("Consultas Hoy", "0") # (Pendiente de implementar lógica real)
+                st.metric("Consultas Hoy", "0")
 
         elif menu == "👥 Gestión Clientes":
             mostrar_gestion_clientes(services.clinic_service)

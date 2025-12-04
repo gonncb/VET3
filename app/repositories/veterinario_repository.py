@@ -9,7 +9,7 @@ class VeterinarioRepository:
     def guardar(self, veterinario: Veterinario):
         self.db.add(veterinario)
         self.db.commit()
-        self.db.refresh(veterinario) # Actualiza el ID generado por la DB
+        self.db.refresh(veterinario) 
         return veterinario
 
     def buscar_por_id(self, vet_id: int):

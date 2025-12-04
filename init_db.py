@@ -3,8 +3,8 @@ from app.database import engine, Base
 from app.models.veterinario import Veterinario
 from app.models.cliente import Cliente
 from app.models.mascota import Mascota
-from app.models.cita import Cita           # <--- Asegúrate que este está
-from app.models.historial import HistorialMedico # <--- Y este también
+from app.models.cita import Cita           
+from app.models.historial import HistorialMedico 
 from sqlalchemy.orm import sessionmaker
 
 def init_db():

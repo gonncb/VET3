@@ -1,7 +1,7 @@
 import sys
 import os
 
-# --- CORRECCIÓN: Ajustar la ruta ANTES de importar nada de 'app' ---
+# --- Ajustar la ruta ANTES de importar nada de 'app' ---
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # -------------------------------------------------------------------
 

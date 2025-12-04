@@ -27,7 +27,7 @@ def mostrar_gestion_clientes(service: ClinicService):
                     exito = service.registrar_cliente_completo(dni, nombre, telefono, nombre_mascota, especie)
                     if exito:
                         st.success(f"✅ Cliente {nombre} registrado con éxito.")
-                        # Opcional: st.rerun() para limpiar formulario, pero cuidado con el bucle
+                        st.rerun()
                     else:
                         st.error("⚠️ Error: Ese DNI ya está registrado en el sistema.")
                 else:

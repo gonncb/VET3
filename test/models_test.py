@@ -7,7 +7,7 @@ import os
 # Ajuste de path para importaciones
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Importamos los modelos (QUE AÚN NO EXISTEN - Esto es normal en TDD)
+# Importamos los modelos (QUE AÚN NO EXISTEN)
 # Usamos try/except para que el test no explote antes de empezar, 
 # pero fallará en las aserciones si no existen.
 try:

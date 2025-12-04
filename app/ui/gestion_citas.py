@@ -34,7 +34,7 @@ def mostrar_gestion_citas(service: CitaService):
                     nombre_mascota = col1.selectbox("Paciente (Mascota)", list(opciones_mascotas.keys()))
                     id_mascota_selec = opciones_mascotas[nombre_mascota]
                     
-                    # B. Selector de Veterinario (TU REQUISITO CLAVE)
+                    # B. Selector de Veterinario 
                     vets = service.obtener_veterinarios_formateados()
                     # Creamos un diccionario: {"Dr. House (Cirugía)": ID_1, ...}
                     opciones_vets = {f"{v.nombre} ({v.especialidad})": v.id for v in vets}
@@ -64,7 +64,7 @@ def mostrar_gestion_citas(service: CitaService):
                     "Fecha": c.fecha,
                     "Hora": c.hora,
                     "Paciente": c.mascota.nombre,
-                    "Veterinario": c.veterinario.nombre, # <-- Aquí se ve el doctor asignado
+                    "Veterinario": c.veterinario.nombre, 
                     "Motivo": c.motivo
                 })
             st.dataframe(datos)
