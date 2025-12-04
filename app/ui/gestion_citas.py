@@ -11,7 +11,7 @@ def mostrar_gestion_citas(service: CitaService):
     with tab_nueva:
         st.subheader("Reservar Cita")
         
-        # 1. Buscar Cliente (Dueño)
+        # El buscador va FUERA del formulario para que no se borre al buscar
         dni_busqueda = st.text_input("Buscar Cliente por DNI:", key="cita_dni_search")
         
         if dni_busqueda:
@@ -20,8 +20,8 @@ def mostrar_gestion_citas(service: CitaService):
             if cliente:
                 st.success(f"Cliente: {cliente.nombre}")
                 
-                # Formulario Cita
-                with st.form("form_crear_cita"):
+                # AQUI ESTÁ EL CAMBIO: clear_on_submit=True
+                with st.form("form_crear_cita", clear_on_submit=True):
                     col1, col2 = st.columns(2)
                     
                     # A. Selector de Mascota
@@ -34,9 +34,8 @@ def mostrar_gestion_citas(service: CitaService):
                     nombre_mascota = col1.selectbox("Paciente (Mascota)", list(opciones_mascotas.keys()))
                     id_mascota_selec = opciones_mascotas[nombre_mascota]
                     
-                    # B. Selector de Veterinario 
+                    # B. Selector de Veterinario
                     vets = service.obtener_veterinarios_formateados()
-                    # Creamos un diccionario: {"Dr. House (Cirugía)": ID_1, ...}
                     opciones_vets = {f"{v.nombre} ({v.especialidad})": v.id for v in vets}
                     
                     nombre_vet = col2.selectbox("Veterinario", list(opciones_vets.keys()))
@@ -50,7 +49,7 @@ def mostrar_gestion_citas(service: CitaService):
                     
                     if st.form_submit_button("Confirmar Cita"):
                         service.crear_cita(fecha, hora_selec, motivo, id_mascota_selec, id_vet_selec)
-                        st.success("✅ Cita agendada correctamente en el sistema.")
+                        st.success("✅ Cita agendada correctamente.")
             else:
                 st.info("Introduce un DNI válido para ver las mascotas.")
 
@@ -64,9 +63,9 @@ def mostrar_gestion_citas(service: CitaService):
                     "Fecha": c.fecha,
                     "Hora": c.hora,
                     "Paciente": c.mascota.nombre,
-                    "Veterinario": c.veterinario.nombre, 
+                    "Veterinario": c.veterinario.nombre,
                     "Motivo": c.motivo
                 })
-            st.dataframe(datos)
+            st.dataframe(datos, use_container_width=True)
         else:
             st.info("No hay citas programadas.")

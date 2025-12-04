@@ -4,7 +4,7 @@ from app.services.medical_service import MedicalService
 def mostrar_gestion_historiales(service: MedicalService):
     st.header("📋 Historial Clínico Digital")
     
-    # 1. Buscador de Paciente
+    # Buscador fuera del form
     dni_search = st.text_input("Buscar Dueño por DNI:", key="hist_dni_search")
     
     if dni_search:
@@ -13,7 +13,6 @@ def mostrar_gestion_historiales(service: MedicalService):
         if cliente:
             st.info(f"Propietario: {cliente.nombre} | Tel: {cliente.telefono}")
             
-            # Selector de Mascota
             opciones_mascotas = {m.nombre: m for m in cliente.mascotas}
             
             if not opciones_mascotas:
@@ -25,21 +24,28 @@ def mostrar_gestion_historiales(service: MedicalService):
             
             st.divider()
             
-            # --- ZONA DE HISTORIAL ---
             tab_ver, tab_nuevo = st.tabs(["📜 Ver Historial Previo", "➕ Nueva Consulta"])
             
             with tab_ver:
                 historial = service.obtener_historial_mascota(mascota_obj.id)
                 if historial:
                     for entrada in historial:
-                        with st.expander(f"{entrada.fecha} - {entrada.diagnostico} (Dr. {entrada.veterinario.nombre})"):
+                        # Usamos try/except por si acaso hay datos antiguos sin vet asignado
+                        try:
+                            nombre_vet = entrada.veterinario.nombre
+                        except:
+                            nombre_vet = "Desconocido"
+                            
+                        with st.expander(f"{entrada.fecha} - {entrada.diagnostico} (Dr. {nombre_vet})"):
                             st.write(f"**Descripción:** {entrada.descripcion}")
                 else:
                     st.info("Este paciente no tiene historial registrado.")
             
             with tab_nuevo:
                 st.subheader(f"Nueva entrada para {mascota_obj.nombre}")
-                with st.form("form_historial"):
+                
+                # AQUI ESTÁ EL CAMBIO: clear_on_submit=True
+                with st.form("form_historial", clear_on_submit=True):
                     diagnostico = st.text_input("Diagnóstico Breve (ej: Otitis)")
                     descripcion = st.text_area("Descripción detallada / Tratamiento")
                     
@@ -47,7 +53,6 @@ def mostrar_gestion_historiales(service: MedicalService):
                     
                     if guardar:
                         if diagnostico and descripcion:
-                            # Obtenemos el ID del veterinario logueado desde la sesión
                             usuario_actual = st.session_state['usuario']
                             
                             service.registrar_consulta(
@@ -57,7 +62,7 @@ def mostrar_gestion_historiales(service: MedicalService):
                                 descripcion=descripcion
                             )
                             st.success("✅ Historial actualizado correctamente.")
-                            st.rerun()
+                            # NOTA: Hemos quitado st.rerun() para que se vea el mensaje y se limpie el form.
                         else:
                             st.error("Debes rellenar diagnóstico y descripción.")
         else:

@@ -9,7 +9,9 @@ def mostrar_gestion_clientes(service: ClinicService):
     # --- PESTAÑA 1: REGISTRO ---
     with tab_registro:
         st.subheader("Alta de Cliente y Mascota")
-        with st.form("form_alta_cliente"):
+        
+        # AQUI ESTÁ EL CAMBIO: clear_on_submit=True
+        with st.form("form_alta_cliente", clear_on_submit=True):
             c1, c2 = st.columns(2)
             dni = c1.text_input("DNI")
             nombre = c2.text_input("Nombre Completo")
@@ -27,7 +29,6 @@ def mostrar_gestion_clientes(service: ClinicService):
                     exito = service.registrar_cliente_completo(dni, nombre, telefono, nombre_mascota, especie)
                     if exito:
                         st.success(f"✅ Cliente {nombre} registrado con éxito.")
-                        st.rerun()
                     else:
                         st.error("⚠️ Error: Ese DNI ya está registrado en el sistema.")
                 else:
@@ -39,10 +40,8 @@ def mostrar_gestion_clientes(service: ClinicService):
         clientes = service.obtener_todos_clientes()
         
         if clientes:
-            # Preparamos datos para visualizarlos bonitos en la tabla
             datos = []
             for c in clientes:
-                # Unimos los nombres de sus mascotas en un solo texto (ej: "Bobby, Thor")
                 nombres_mascotas = ", ".join([m.nombre for m in c.mascotas])
                 datos.append({
                     "DNI": c.dni,
