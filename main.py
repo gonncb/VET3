@@ -1,6 +1,6 @@
 import streamlit as st
 from app.database import SessionLocal
-# hola 
+
 # --- IMPORTACIÓN DE REPOSITORIOS (Acceso a Datos) ---
 from app.repositories.veterinario_repository import VeterinarioRepository
 from app.repositories.cliente_repository import ClienteRepository
