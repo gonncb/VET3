@@ -7,26 +7,32 @@ class ClinicService:
         self.repo = cliente_repo
 
     def registrar_cliente_completo(self, dni, nombre, telefono, nombre_mascota, especie):
-        """
-        Registra un cliente nuevo y su primera mascota.
-        Devuelve True si tiene éxito, False si el DNI ya existe.
-        """
-        # 1. Validación de Negocio: ¿Existe el DNI?
         if self.repo.buscar_por_dni(dni):
-            return False  # El cliente ya existe
+            return False 
         
-        # 2. Crear Entidades
         nuevo_cliente = Cliente(dni=dni, nombre=nombre, telefono=telefono)
-        # Aquí creamos la mascota pero NO la guardamos todavía
         nueva_mascota = Mascota(nombre=nombre_mascota, especie=especie)
-        
-        # 3. Asociar (La magia de ORM)
-        # Al añadir la mascota a la lista del cliente, SQLAlchemy entiende la relación
         nuevo_cliente.mascotas.append(nueva_mascota)
         
-        # 4. Persistir (Guardar padre e hijo a la vez)
         self.repo.guardar(nuevo_cliente)
         return True
     
     def obtener_todos_clientes(self):
         return self.repo.buscar_todos()
+
+    # --- NUEVOS MÉTODOS ---
+    def eliminar_cliente(self, id_cliente):
+        cliente = self.repo.buscar_por_id(id_cliente)
+        if cliente:
+            self.repo.eliminar(cliente)
+            return True
+        return False
+
+    def actualizar_cliente(self, id_cliente, nuevo_nombre, nuevo_telefono):
+        cliente = self.repo.buscar_por_id(id_cliente)
+        if cliente:
+            cliente.nombre = nuevo_nombre
+            cliente.telefono = nuevo_telefono
+            self.repo.actualizar() # Hace commit de los cambios
+            return True
+        return False

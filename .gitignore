@@ -11,3 +11,6 @@ __pycache__/
 
 # Archivos de cache de pytest
 .pytest_cache/
+
+# Contraseñas y claves
+.env

@@ -12,8 +12,16 @@ class CitaRepository:
         return cita
 
     def buscar_todas(self):
-        # Carga mascota y veterinario a la vez para evitar errores en la tabla
         return self.db.query(Cita).options(
             joinedload(Cita.mascota),
             joinedload(Cita.veterinario)
         ).all()
+        
+    # --- NUEVO MÉTODO ---
+    def eliminar_por_id(self, id_cita: int):
+        cita = self.db.query(Cita).filter(Cita.id == id_cita).first()
+        if cita:
+            self.db.delete(cita)
+            self.db.commit()
+            return True
+        return False

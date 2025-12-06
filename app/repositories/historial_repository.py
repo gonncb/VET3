@@ -12,9 +12,20 @@ class HistorialRepository:
         return historial
 
     def buscar_por_mascota(self, id_mascota: int):
-        """Devuelve todo el historial de una mascota ordenado por fecha descendente"""
         return self.db.query(HistorialMedico)\
             .options(joinedload(HistorialMedico.veterinario))\
             .filter(HistorialMedico.id_mascota == id_mascota)\
             .order_by(HistorialMedico.fecha.desc())\
             .all()
+
+    # --- NUEVOS MÉTODOS ---
+    def buscar_por_id(self, id_historial: int):
+        return self.db.query(HistorialMedico).filter(HistorialMedico.id == id_historial).first()
+
+    def eliminar(self, historial: HistorialMedico):
+        self.db.delete(historial)
+        self.db.commit()
+
+    def actualizar(self):
+        # Confirma los cambios hechos en los objetos cargados en memoria
+        self.db.commit()

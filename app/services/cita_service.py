@@ -1,3 +1,4 @@
+# --- IMPORTACIONES NECESARIAS ---
 from app.repositories.cita_repository import CitaRepository
 from app.repositories.veterinario_repository import VeterinarioRepository
 from app.repositories.cliente_repository import ClienteRepository
@@ -5,15 +6,14 @@ from app.models.cita import Cita
 
 class CitaService:
     def __init__(self, cita_repo: CitaRepository, vet_repo: VeterinarioRepository, cliente_repo: ClienteRepository):
+        # Inyectamos los 3 repositorios necesarios
         self.cita_repo = cita_repo
         self.vet_repo = vet_repo
         self.cliente_repo = cliente_repo
 
     def obtener_veterinarios_formateados(self):
         """Devuelve lista de veterinarios para usar en un selectbox"""
-        vets = self.vet_repo.buscar_todos()
-        # Devuelve una lista de tuplas o diccionarios útiles
-        return vets
+        return self.vet_repo.buscar_todos()
 
     def buscar_cliente_por_dni(self, dni):
         return self.cliente_repo.buscar_por_dni(dni)
@@ -30,3 +30,7 @@ class CitaService:
         
     def obtener_historial_citas(self):
         return self.cita_repo.buscar_todas()
+    
+    # --- MÉTODO PARA CANCELAR (CRUD) ---
+    def cancelar_cita(self, id_cita):
+        return self.cita_repo.eliminar_por_id(id_cita)

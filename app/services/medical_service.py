@@ -9,7 +9,6 @@ class MedicalService:
         self.cliente_repo = cliente_repo
 
     def buscar_cliente_por_dni(self, dni):
-        # Reutilizamos la lógica de buscar cliente para encontrar a la mascota
         return self.cliente_repo.buscar_por_dni(dni)
 
     def obtener_historial_mascota(self, id_mascota):
@@ -17,10 +16,27 @@ class MedicalService:
 
     def registrar_consulta(self, id_mascota, id_veterinario, diagnostico, descripcion):
         nueva_consulta = HistorialMedico(
-            fecha=date.today(), # La fecha es automática al momento del registro
+            fecha=date.today(),
             id_mascota=id_mascota,
             id_veterinario=id_veterinario,
             diagnostico=diagnostico,
             descripcion=descripcion
         )
         return self.historial_repo.guardar(nueva_consulta)
+
+    # --- NUEVOS MÉTODOS ---
+    def eliminar_consulta(self, id_historial):
+        consulta = self.historial_repo.buscar_por_id(id_historial)
+        if consulta:
+            self.historial_repo.eliminar(consulta)
+            return True
+        return False
+
+    def actualizar_consulta(self, id_historial, nuevo_diagnostico, nueva_descripcion):
+        consulta = self.historial_repo.buscar_por_id(id_historial)
+        if consulta:
+            consulta.diagnostico = nuevo_diagnostico
+            consulta.descripcion = nueva_descripcion
+            self.historial_repo.actualizar()
+            return True
+        return False
