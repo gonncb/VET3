@@ -1,0 +1,86 @@
+# 🐾 VetManager Pro: Sistema de Gestión Clínica (SOLID + TDD)
+
+**VetManager Pro** es una plataforma integral para la gestión de clínicas veterinarias, desarrollada bajo estrictos estándares de Ingeniería de Software (Arquitectura por Capas, TDD y Principios SOLID).
+
+Este sistema permite la administración completa del flujo de trabajo clínico: desde el registro de pacientes y la agenda médica hasta la gestión de historiales y el análisis de datos mediante un cuadro de mando inteligente (Dashboard).
+
+---
+
+## 🚀 Funcionalidades Principales (v2.0)
+
+### 📊 Dashboard Inteligente (Business Intelligence)
+* **KPIs en tiempo real:** Visualización instantánea de citas del día, total de pacientes activos y volumen de trabajo.
+* **Gráficos interactivos:** Análisis de carga de trabajo por veterinario (integración con Pandas).
+* **Detección automática de agenda:** Indicadores visuales y alertas para las citas pendientes del día en curso.
+
+### 🛡️ Seguridad y Control de Acceso
+* **Protección de Credenciales:** Implementación de variables de entorno (`.env`) para evitar contraseñas expuestas en el código fuente.
+* **Roles Diferenciados:** Acceso exclusivo para Dirección (Admin) y Personal Médico (Veterinarios).
+
+### 🔄 CRUD Completo (Gestión Total)
+* **Edición y Corrección:** Posibilidad de modificar datos de clientes, mascotas y citas erróneas directamente desde la interfaz.
+* **Borrado en Cascada:** Eliminación segura de clientes (y sus mascotas asociadas automáticamente) para mantener la integridad referencial.
+* **Historial Médico:** Gestión completa (Lectura, Escritura, Edición y Borrado) de consultas pasadas.
+
+---
+
+## 🏗️ Arquitectura del Proyecto
+
+El sistema sigue una **Arquitectura en Capas (Layered Architecture)** para desacoplar responsabilidades y facilitar el testing:
+
+```text
+vet_manager/
+│
+├── app/
+│   ├── models/          # Entidades de Base de Datos (SQLAlchemy)
+│   ├── repositories/    # Capa de Acceso a Datos (CRUD puro y SQL)
+│   ├── services/        # Capa de Lógica de Negocio y Cálculos
+│   └── ui/              # Capa de Presentación (Vistas Streamlit)
+│
+├── tests/               # Tests Automatizados (Pytest & Mocks)
+│
+├── main.py              # Inyector de Dependencias (Entry Point)
+├── seed_data.py         # Factory de Datos Masivos (Seguro con .env)
+├── .env                 # Variables de Entorno (Ignorado por Git)
+└── requirements.txt     # Dependencias del proyecto
+
+¡¡¡ AVISO PARA LA PUESTA EN MARCHA DEL PROGRAMA !!!
+
+Antes de nada para poder correr este programa hay que clonar y preparar un entorno con :
+
+git clone <https://github.com/gonncb/VET3>
+cd VetManager
+python -m venv venv
+
+# Activar entorno (Windows):
+.\venv\Scripts\activate
+
+# Activar entorno (Mac/Linux):
+source venv/bin/activate
+
+# instalar requerimientos:
+pip instal -r requirements.txt
+
+# crear un aarchivo llamado .env (donde se almacenarán las password de cada usuario):
+ADMIN_PASSWORD=(TuClaveAdmin)
+VET_PASSWORD=(TuClaveHouse)
+GREY_PASSWORD=(TuClaveGrey)
+DOLITTLE_PASSWORD=(TuClaveDolittle)
+
+# correr el script seed_data.py para tener datos en la base
+python seed_data.py
+
+# esto creará una serie de veterianrios usuarios del programa con sus credenciales que tú crearás en .env , los cuales son:
+admin --> PASSWORD  (administrador general)
+100 --> PASSWORD  (Dr. House diagnóstico)
+200 --> PASSWORD  (Dra. Grey cirugía)
+300 --> PASSWORD  (Dr. Dolittle exóticos)
+
+# ejecutar main.py
+streamlit run main.py
+
+# para la prueba con pytest
+python -m pytest
+# debería salir todo en verde
+
+
