@@ -48,21 +48,33 @@ def mostrar_gestion_citas(service: CitaService):
         citas = service.obtener_historial_citas()
         if citas:
             st.subheader("Próximas Citas")
+            
+            # Cabecera simulada (opcional, para que se entienda mejor)
+            c1, c2, c3, c4, c5, c6 = st.columns([2, 1, 2, 2, 4, 1])
+            c1.markdown("**Fecha**")
+            c2.markdown("**Hora**")
+            c3.markdown("**Paciente**")
+            c4.markdown("**Veterinario**")
+            c5.markdown("**Motivo**") # <--- Nueva cabecera
+            c6.markdown("**Acción**")
+            st.divider()
+
             for cita in citas:
-                # Usamos columnas para simular una tabla con botón
-                col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 3, 1])
+                # Ahora usamos 6 columnas para incluir el Motivo
+                col1, col2, col3, col4, col5, col6 = st.columns([2, 1, 2, 2, 4, 1])
                 
-                col1.write(f"📅 **{cita.fecha}**")
+                col1.write(f"📅 {cita.fecha}")
                 col2.write(f"⏰ {cita.hora}")
                 col3.write(f"🐾 {cita.mascota.nombre}")
                 col4.write(f"🩺 {cita.veterinario.nombre}")
+                col5.info(f"{cita.motivo}") # <--- AQUI SE VE EL MOTIVO
                 
-                # Botón de borrar (pequeño y rojo si es posible, pero Streamlit es limitado en estilos)
-                if col5.button("❌", key=f"del_cita_{cita.id}", help="Cancelar Cita"):
+                # Botón de borrar
+                if col6.button("❌", key=f"del_cita_{cita.id}", help="Cancelar Cita"):
                     service.cancelar_cita(cita.id)
-                    st.toast("Cita cancelada correctamente") # Mensaje flotante elegante
+                    st.toast("Cita cancelada correctamente")
                     st.rerun()
                 
-                st.divider() # Línea separadora
+                st.markdown("---") # Separador más sutil
         else:
             st.info("No hay citas programadas.")
