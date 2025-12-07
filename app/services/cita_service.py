@@ -1,4 +1,5 @@
-# --- IMPORTACIONES NECESARIAS ---
+from datetime import date
+from collections import Counter
 from app.repositories.cita_repository import CitaRepository
 from app.repositories.veterinario_repository import VeterinarioRepository
 from app.repositories.cliente_repository import ClienteRepository
@@ -6,7 +7,6 @@ from app.models.cita import Cita
 
 class CitaService:
     def __init__(self, cita_repo: CitaRepository, vet_repo: VeterinarioRepository, cliente_repo: ClienteRepository):
-        # Inyectamos los 3 repositorios necesarios
         self.cita_repo = cita_repo
         self.vet_repo = vet_repo
         self.cliente_repo = cliente_repo
@@ -31,6 +31,28 @@ class CitaService:
     def obtener_historial_citas(self):
         return self.cita_repo.buscar_todas()
     
-    # --- MÉTODO PARA CANCELAR (CRUD) ---
     def cancelar_cita(self, id_cita):
         return self.cita_repo.eliminar_por_id(id_cita)
+
+    # --- MÉTODO PARA EL DASHBOARD ---
+    def obtener_estadisticas_dashboard(self):
+        """
+        Calcula métricas clave para el panel de control.
+        Devuelve un diccionario con totales y agrupaciones.
+        """
+        todas_citas = self.cita_repo.buscar_todas()
+        
+        # 1. Citas de Hoy (Comparando fechas)
+        hoy = date.today()
+        citas_hoy = sum(1 for c in todas_citas if c.fecha == hoy)
+        
+        # 2. Citas por Veterinario (Para el gráfico)
+        # Extraemos solo los nombres de los doctores asignados
+        vets = [c.veterinario.nombre for c in todas_citas if c.veterinario]
+        conteo_vets = Counter(vets) 
+        
+        return {
+            "total_citas": len(todas_citas),
+            "citas_hoy": citas_hoy,
+            "citas_por_vet": conteo_vets
+        }
