@@ -6,7 +6,7 @@ def mostrar_gestion_clientes(service: ClinicService):
     
     tab_registro, tab_listado = st.tabs(["📝 Nuevo Cliente", "📋 Listado y Edición"])
     
-    # --- PESTAÑA 1: REGISTRO (Igual que antes) ---
+    # --- PESTAÑA 1: REGISTRO ---
     with tab_registro:
         st.subheader("Alta de Cliente y Mascota")
         with st.form("form_alta_cliente", clear_on_submit=True):
@@ -28,7 +28,7 @@ def mostrar_gestion_clientes(service: ClinicService):
                 else:
                     st.warning("Faltan datos.")
 
-    # --- PESTAÑA 2: LISTADO Y EDICIÓN (¡NUEVO!) ---
+    # --- PESTAÑA 2: LISTADO Y EDICIÓN ---
     with tab_listado:
         st.subheader("Directorio de Clientes")
         clientes = service.obtener_todos_clientes()

@@ -67,7 +67,7 @@ def mostrar_gestion_historiales(service: MedicalService):
                 else:
                     st.info("Este paciente no tiene historial registrado.")
             
-            # --- PESTAÑA 2: NUEVA CONSULTA (Igual que antes) ---
+            # --- PESTAÑA 2: NUEVA CONSULTA ---
             with tab_nuevo:
                 st.subheader(f"Nueva entrada para {mascota_obj.nombre}")
                 

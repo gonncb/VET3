@@ -17,7 +17,7 @@ class CitaRepository:
             joinedload(Cita.veterinario)
         ).all()
         
-    # --- NUEVO MÉTODO ---
+    # --- OPCIÓN ELIMINAR ---
     def eliminar_por_id(self, id_cita: int):
         cita = self.db.query(Cita).filter(Cita.id == id_cita).first()
         if cita:

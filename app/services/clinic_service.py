@@ -20,7 +20,7 @@ class ClinicService:
     def obtener_todos_clientes(self):
         return self.repo.buscar_todos()
 
-    # --- NUEVOS MÉTODOS ---
+    # --- ACTUALIZAR Y BORRAR DATOS ---
     def eliminar_cliente(self, id_cliente):
         cliente = self.repo.buscar_por_id(id_cliente)
         if cliente:

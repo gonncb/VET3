@@ -7,7 +7,7 @@ def mostrar_gestion_citas(service: CitaService):
     
     tab_nueva, tab_ver = st.tabs(["➕ Nueva Cita", "👁️ Ver Agenda y Cancelar"])
     
-    # --- PESTAÑA 1: PEDIR CITA (Igual que antes) ---
+    # --- PESTAÑA 1: PEDIR CITA ---
     with tab_nueva:
         st.subheader("Reservar Cita")
         dni_busqueda = st.text_input("Buscar Cliente por DNI:", key="cita_dni_search")
@@ -43,7 +43,7 @@ def mostrar_gestion_citas(service: CitaService):
             else:
                 st.info("Introduce un DNI válido.")
 
-    # --- PESTAÑA 2: VER AGENDA (¡ACTUALIZADO!) ---
+    # --- PESTAÑA 2: VER AGENDA ---
     with tab_ver:
         citas = service.obtener_historial_citas()
         if citas:
@@ -55,7 +55,7 @@ def mostrar_gestion_citas(service: CitaService):
             c2.markdown("**Hora**")
             c3.markdown("**Paciente**")
             c4.markdown("**Veterinario**")
-            c5.markdown("**Motivo**") # <--- Nueva cabecera
+            c5.markdown("**Motivo**") 
             c6.markdown("**Acción**")
             st.divider()
 
@@ -67,7 +67,7 @@ def mostrar_gestion_citas(service: CitaService):
                 col2.write(f"⏰ {cita.hora}")
                 col3.write(f"🐾 {cita.mascota.nombre}")
                 col4.write(f"🩺 {cita.veterinario.nombre}")
-                col5.info(f"{cita.motivo}") # <--- AQUI SE VE EL MOTIVO
+                col5.info(f"{cita.motivo}") 
                 
                 # Botón de borrar
                 if col6.button("❌", key=f"del_cita_{cita.id}", help="Cancelar Cita"):
@@ -75,6 +75,6 @@ def mostrar_gestion_citas(service: CitaService):
                     st.toast("Cita cancelada correctamente")
                     st.rerun()
                 
-                st.markdown("---") # Separador más sutil
+                st.markdown("---") # Separador sutil
         else:
             st.info("No hay citas programadas.")

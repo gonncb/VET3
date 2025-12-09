@@ -18,7 +18,6 @@ class HistorialRepository:
             .order_by(HistorialMedico.fecha.desc())\
             .all()
 
-    # --- NUEVOS MÉTODOS ---
     def buscar_por_id(self, id_historial: int):
         return self.db.query(HistorialMedico).filter(HistorialMedico.id == id_historial).first()
 
