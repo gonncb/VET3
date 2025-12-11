@@ -38,8 +38,4 @@ def test_crear_cliente_y_mascota(session):
     assert mascota.id is not None
     assert len(cliente.mascotas) == 1
     assert cliente.mascotas[0].nombre == "Fido"
-    
-    # --- AQUÍ ESTABA EL ERROR ---
-    # Antes ponía: assert mascota.dueno == cliente
-    # Ahora debe poner:
-    assert mascota.cliente == cliente  # <--- CORREGIDO: Usamos 'cliente'
+    assert mascota.cliente == cliente  
