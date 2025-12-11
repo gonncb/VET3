@@ -1,7 +1,7 @@
 from datetime import date
 from app.repositories.historial_repository import HistorialRepository
 from app.repositories.cliente_repository import ClienteRepository
-from app.repositories.producto_repository import ProductoRepository # Nuevo import
+from app.repositories.producto_repository import ProductoRepository
 from app.models.historial import HistorialMedico
 
 class MedicalService:
@@ -17,7 +17,7 @@ class MedicalService:
     def obtener_historial_mascota(self, id_mascota):
         return self.historial_repo.buscar_por_mascota(id_mascota)
 
-    # --- MÉTODO ACTUALIZADO: AHORA GESTIONA PRODUCTOS ---
+    # --- GESTIONA PRODUCTOS ---
     def registrar_consulta(self, id_mascota, id_veterinario, diagnostico, descripcion, lista_ids_productos=None):
         """
         Registra la consulta y descuenta del stock los productos utilizados.

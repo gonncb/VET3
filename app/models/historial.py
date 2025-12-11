@@ -24,7 +24,7 @@ class HistorialMedico(Base):
     id_veterinario = Column(Integer, ForeignKey("veterinarios.id"), nullable=False)
     veterinario = relationship("app.models.veterinario.Veterinario")
 
-    # Relación con Productos (NUEVO)
+    # Relación con Productos
     productos_utilizados = relationship("app.models.producto.Producto", secondary=historial_productos)
 
     def __repr__(self):

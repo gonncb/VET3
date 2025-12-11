@@ -14,7 +14,7 @@ class Cliente(Base):
     # Importante: back_populates debe coincidir con el nombre de la variable en Mascota (que es 'cliente')
     mascotas = relationship(
         "app.models.mascota.Mascota", 
-        back_populates="cliente",  # <--- ANTES PONÍA "dueno", AHORA DEBE SER "cliente"
+        back_populates="cliente", 
         cascade="all, delete-orphan"
     )
 

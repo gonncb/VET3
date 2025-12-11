@@ -17,7 +17,6 @@ class ClienteRepository:
     def buscar_todos(self):
         return self.db.query(Cliente).options(joinedload(Cliente.mascotas)).all()
 
-    # --- NUEVOS MÉTODOS ---
     def buscar_por_id(self, id: int):
         return self.db.query(Cliente).filter(Cliente.id == id).first()
 

@@ -7,7 +7,7 @@ def mostrar_gestion_citas(service: CitaService):
     
     tab_nueva, tab_ver = st.tabs(["➕ Nueva Cita", "👁️ Ver Agenda y Cancelar"])
     
-    # --- PESTAÑA 1: PEDIR CITA (Sin cambios) ---
+    # --- PESTAÑA 1: PEDIR CITA ---
     with tab_nueva:
         st.subheader("Reservar Cita")
         dni_busqueda = st.text_input("Buscar Cliente por DNI:", key="cita_dni_search")
@@ -43,7 +43,7 @@ def mostrar_gestion_citas(service: CitaService):
             else:
                 st.info("Introduce un DNI válido.")
 
-    # --- PESTAÑA 2: VER AGENDA (¡ACTUALIZADO CON BUSCADOR!) ---
+    # --- PESTAÑA 2: VER AGENDA ---
     with tab_ver:
         st.subheader("Agenda de Citas")
         
@@ -51,7 +51,7 @@ def mostrar_gestion_citas(service: CitaService):
         todas_citas = service.obtener_historial_citas()
         
         if todas_citas:
-            # 2. BARRA DE BÚSQUEDA (El "Control+F")
+            # 2. BARRA DE BÚSQUEDA (El "Control+F" de toda la vida)
             search_term = st.text_input("🔍 Filtrar por DNI, Cliente o Mascota:", placeholder="Escribe para filtrar...")
             
             # 3. LÓGICA DE FILTRADO EN PYTHON

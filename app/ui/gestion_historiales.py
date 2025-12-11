@@ -46,14 +46,14 @@ def mostrar_gestion_historiales(medical_service: MedicalService, inventory_servi
                                     st.markdown(f"- {prod.nombre} ({prod.categoria})")
                             
                             st.divider()
-                            # (Aquí irían los botones de Editar/Borrar igual que antes...)
+                            # (Aquí irían los botones de Editar/Borrar)
                             if st.button("🗑️ Borrar", key=f"del_{entrada.id}"):
                                 medical_service.eliminar_consulta(entrada.id)
                                 st.rerun()
                 else:
                     st.info("Sin historial.")
             
-            # --- PESTAÑA NUEVA CONSULTA (CON STOCK) ---
+            # --- PESTAÑA CONSULTA (CON STOCK) ---
             with tab_nuevo:
                 st.subheader(f"Nueva entrada para {mascota_obj.nombre}")
                 
