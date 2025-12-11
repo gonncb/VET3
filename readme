@@ -1,50 +1,60 @@
-# 🐾 VetManager Pro: Sistema de Gestión Clínica (SOLID + TDD)
+# 🐾 VetManager ERP: Sistema Integral de Gestión Veterinaria
 
-**VetManager Pro** es una plataforma integral para la gestión de clínicas veterinarias, desarrollada bajo estrictos estándares de Ingeniería de Software (Arquitectura por Capas, TDD y Principios SOLID).
+**VetManager ERP** es una solución de software profesional diseñada para la administración clínica y de recursos en centros veterinarios.
 
-Este sistema permite la administración completa del flujo de trabajo clínico: desde el registro de pacientes y la agenda médica hasta la gestión de historiales y el análisis de datos mediante un cuadro de mando inteligente (Dashboard).
-
----
-
-## 🚀 Funcionalidades Principales (v2.0)
-
-### 📊 Dashboard Inteligente (Business Intelligence)
-* **KPIs en tiempo real:** Visualización instantánea de citas del día, total de pacientes activos y volumen de trabajo.
-* **Gráficos interactivos:** Análisis de carga de trabajo por veterinario (integración con Pandas).
-* **Detección automática de agenda:** Indicadores visuales y alertas para las citas pendientes del día en curso.
-
-### 🛡️ Seguridad y Control de Acceso
-* **Protección de Credenciales:** Implementación de variables de entorno (`.env`) para evitar contraseñas expuestas en el código fuente.
-* **Roles Diferenciados:** Acceso exclusivo para Dirección (Admin) y Personal Médico (Veterinarios).
-
-### 🔄 CRUD Completo (Gestión Total)
-* **Edición y Corrección:** Posibilidad de modificar datos de clientes, mascotas y citas erróneas directamente desde la interfaz.
-* **Borrado en Cascada:** Eliminación segura de clientes (y sus mascotas asociadas automáticamente) para mantener la integridad referencial.
-* **Historial Médico:** Gestión completa (Lectura, Escritura, Edición y Borrado) de consultas pasadas.
+Desarrollado bajo una arquitectura estricta de **Ingeniería de Software (SOLID + TDD)**, el sistema evoluciona el concepto de agenda simple hacia un **ERP completo** que conecta pacientes, citas, historial médico y control de stock en tiempo real.
 
 ---
 
-## 🏗️ Arquitectura del Proyecto
+## 🚀 Funcionalidades Clave (v3.0 Final)
 
-El sistema sigue una **Arquitectura en Capas (Layered Architecture)** para desacoplar responsabilidades y facilitar el testing:
+### 📊 Business Intelligence (Dashboard)
+* **KPIs en Tiempo Real:** Métricas instantáneas de carga de trabajo, volumen de pacientes y alertas de stock bajo.
+* **Análisis de Datos Avanzado:**
+    * 📉 **Carga de Trabajo:** Gráfico de barras interactivo (Pandas) para visualizar la saturación por veterinario.
+    * 🍩 **Distribución de Especies:** Gráfico de anillo (Plotly) para analizar la tipología de pacientes.
+* **Agenda Inteligente:** Detección automática de citas del día actual.
+
+### 📦 Gestión de Inventario y Farmacia
+* **Control de Stock:** Monitorización de existencias de vacunas, medicamentos y material.
+* **Trazabilidad Médica:** Integración automática con el Historial Clínico. Al registrar una consulta, los productos utilizados se descuentan automáticamente del almacén.
+* **Alertas Inteligentes:** Avisos visuales rojos cuando el stock desciende del mínimo de seguridad.
+
+### 📅 Agenda y Pacientes
+* **Buscador "Control+F":** Filtrado instantáneo de la agenda por DNI, nombre del dueño o nombre de la mascota.
+* **Datos Realistas:** El sistema genera proceduralmente cientos de clientes, mascotas y citas futuras con nombres y fechas coherentes.
+* **Receta Digital:** Generación y descarga de informes médicos en formato `.txt` para el cliente.
+
+### 🛡️ Seguridad y Arquitectura
+* **Protección de Credenciales:** Uso de variables de entorno (`.env`) para la gestión de secretos.
+* **Roles Diferenciados:** Acceso segregado para Dirección y Personal Médico.
+
+---
+
+## 🏗️ Arquitectura Técnica (Capas)
+
+El proyecto sigue una separación estricta de responsabilidades (Layered Architecture):
 
 ```text
 vet_manager/
 │
 ├── app/
-│   ├── models/          # Entidades de Base de Datos (SQLAlchemy)
-│   ├── repositories/    # Capa de Acceso a Datos (CRUD puro y SQL)
-│   ├── services/        # Capa de Lógica de Negocio y Cálculos
-│   └── ui/              # Capa de Presentación (Vistas Streamlit)
+│   ├── models/          # Entidades ORM (Cliente, Mascota, Producto, Historial...)
+│   ├── repositories/    # Capa de Acceso a Datos (SQLAlchemy, Queries Optimzadas)
+│   ├── services/        # Lógica de Negocio (Cálculos, Stock, Validaciones)
+│   └── ui/              # Interfaz de Usuario (Streamlit Views)
 │
-├── tests/               # Tests Automatizados (Pytest & Mocks)
+├── tests/               # Tests Automatizados (Pytest)
 │
-├── main.py              # Inyector de Dependencias (Entry Point)
-├── seed_data.py         # Factory de Datos Masivos (Seguro con .env)
-├── .env                 # Variables de Entorno (Ignorado por Git)
-└── requirements.txt     # Dependencias del proyecto
+├── main.py              # Inyector de Dependencias (Service Container)
+├── seed_data.py         # Generador de "Demo Mode" (Datos masivos aleatorios)
+├── init_db.py           # Inicializador "Clean Mode" (Solo Admin)
+├── .env                 # Credenciales (No incluido en repositorio)
+└── requirements.txt     # Dependencias (Pandas, Plotly, Streamlit...)
 
-¡¡¡ AVISO PARA LA PUESTA EN MARCHA DEL PROGRAMA !!!
+===========================================================================================================
+
+--->   ###  ¡¡¡ AVISO PARA LA PUESTA EN MARCHA DEL PROGRAMA !!!  ###   <---
 
 Antes de nada para poder correr este programa hay que clonar y preparar un entorno con :
 
