@@ -163,7 +163,7 @@ def cargar_datos_prueba():
         session.add_all(historiales)
         session.commit()
 
-        # --- 7. AGENDA DE CITAS (MODIFICADO: EMPIEZA MAÑANA TARDE) ---
+        # --- 7. AGENDA DE CITAS ---
         print("📅 Organizando la agenda (Inicio: Mañana por la tarde)...")
         
         citas = []
