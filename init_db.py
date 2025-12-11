@@ -1,35 +1,20 @@
 from app.database import engine, Base
-# IMPORTANTE: Importar todos los modelos para que SQLAlchemy sepa que debe crear las tablas
+# Importamos todos los modelos para que SQLAlchemy sepa qué tablas crear
 from app.models.veterinario import Veterinario
 from app.models.cliente import Cliente
 from app.models.mascota import Mascota
-from app.models.cita import Cita           
-from app.models.historial import HistorialMedico 
-from sqlalchemy.orm import sessionmaker
+from app.models.cita import Cita
+from app.models.historial import HistorialMedico
+from app.models.producto import Producto
 
-def init_db():
-    print("🔄 Eliminando y recreando tablas...")
-    # Esto borrará y creará todo desde cero (útil para desarrollo)
-    Base.metadata.drop_all(bind=engine) 
-    Base.metadata.create_all(bind=engine)
-
-    Session = sessionmaker(bind=engine)
-    session = Session()
-
-    # Crear Admin
-    if not session.query(Veterinario).filter_by(num_colegiado="admin").first():
-        print("👤 Creando usuario administrador...")
-        admin = Veterinario(
-            nombre="Administrador", 
-            especialidad="Dirección", 
-            num_colegiado="admin", 
-            password="123"
-        )
-        session.add(admin)
-
-    session.commit()
-    session.close()
-    print("✅ Base de datos inicializada correctamente.")
+def crear_tablas():
+    print("🏗️ Creando estructura de base de datos (Tablas vacías)...")
+    try:
+        # Esto crea las tablas si no existen, pero NO inserta datos
+        Base.metadata.create_all(bind=engine)
+        print("✅ Tablas creadas correctamente.")
+    except Exception as e:
+        print(f"❌ Error creando tablas: {e}")
 
 if __name__ == "__main__":
-    init_db()
+    crear_tablas()
