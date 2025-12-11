@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
 from app.models.cita import Cita
+from app.models.mascota import Mascota # <--- Importante importar Mascota para el join
 
 class CitaRepository:
     def __init__(self, db_session: Session):
@@ -12,12 +13,14 @@ class CitaRepository:
         return cita
 
     def buscar_todas(self):
+        # AQUI ESTA LA MAGIA:
+        # 1. Cargamos el Veterinario
+        # 2. Cargamos la Mascota Y ADEMÁS (joinedload anidado) cargamos el Cliente de esa mascota
         return self.db.query(Cita).options(
-            joinedload(Cita.mascota),
-            joinedload(Cita.veterinario)
+            joinedload(Cita.veterinario),
+            joinedload(Cita.mascota).joinedload(Mascota.cliente) 
         ).all()
         
-    # --- OPCIÓN ELIMINAR ---
     def eliminar_por_id(self, id_cita: int):
         cita = self.db.query(Cita).filter(Cita.id == id_cita).first()
         if cita:

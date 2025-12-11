@@ -12,6 +12,7 @@ class VeterinarioRepository:
         return veterinario
 
     def buscar_por_colegiado(self, num_colegiado: str):
+        # Buscamos el usuario exacto por su ID de empleado (num_colegiado)
         return self.db.query(Veterinario).filter(Veterinario.num_colegiado == num_colegiado).first()
     
     def buscar_todos(self):

@@ -10,9 +10,13 @@ class Cliente(Base):
     nombre = Column(String, nullable=False)
     telefono = Column(String)
 
-    # Relación: Un cliente tiene muchas mascotas
-    # 'mascotas' será una lista de objetos Mascota
-    mascotas = relationship("Mascota", back_populates="dueno", cascade="all, delete-orphan")
+    # RELACIÓN: Un cliente tiene muchas mascotas
+    # Importante: back_populates debe coincidir con el nombre de la variable en Mascota (que es 'cliente')
+    mascotas = relationship(
+        "app.models.mascota.Mascota", 
+        back_populates="cliente",  # <--- ANTES PONÍA "dueno", AHORA DEBE SER "cliente"
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
-        return f"<Cliente {self.nombre}>"
+        return f"<Cliente {self.nombre} ({self.dni})>"

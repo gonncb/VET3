@@ -9,11 +9,11 @@ class Mascota(Base):
     nombre = Column(String, nullable=False)
     especie = Column(String, nullable=False)
     
-    # Clave Foránea: Apunta a clientes.id
-    id_cliente = Column(Integer, ForeignKey("clientes.id"), nullable=False)
-
-    # Relación inversa: Acceder al objeto Cliente desde la Mascota
-    dueno = relationship("app.models.cliente.Cliente", back_populates="mascotas")
+    id_cliente = Column(Integer, ForeignKey("clientes.id"))
+    
+    # RELACIÓN: Una mascota pertenece a un Cliente
+    # back_populates debe coincidir con el nombre de la variable en Cliente (que es 'mascotas')
+    cliente = relationship("app.models.cliente.Cliente", back_populates="mascotas")
 
     def __repr__(self):
         return f"<Mascota {self.nombre}>"

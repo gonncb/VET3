@@ -7,7 +7,7 @@ def mostrar_gestion_citas(service: CitaService):
     
     tab_nueva, tab_ver = st.tabs(["➕ Nueva Cita", "👁️ Ver Agenda y Cancelar"])
     
-    # --- PESTAÑA 1: PEDIR CITA ---
+    # --- PESTAÑA 1: PEDIR CITA (Sin cambios) ---
     with tab_nueva:
         st.subheader("Reservar Cita")
         dni_busqueda = st.text_input("Buscar Cliente por DNI:", key="cita_dni_search")
@@ -43,38 +43,69 @@ def mostrar_gestion_citas(service: CitaService):
             else:
                 st.info("Introduce un DNI válido.")
 
-    # --- PESTAÑA 2: VER AGENDA ---
+    # --- PESTAÑA 2: VER AGENDA (¡ACTUALIZADO CON BUSCADOR!) ---
     with tab_ver:
-        citas = service.obtener_historial_citas()
-        if citas:
-            st.subheader("Próximas Citas")
+        st.subheader("Agenda de Citas")
+        
+        # 1. Obtenemos TODAS las citas primero
+        todas_citas = service.obtener_historial_citas()
+        
+        if todas_citas:
+            # 2. BARRA DE BÚSQUEDA (El "Control+F")
+            search_term = st.text_input("🔍 Filtrar por DNI, Cliente o Mascota:", placeholder="Escribe para filtrar...")
             
-            # Cabecera simulada (opcional, para que se entienda mejor)
-            c1, c2, c3, c4, c5, c6 = st.columns([2, 1, 2, 2, 4, 1])
-            c1.markdown("**Fecha**")
-            c2.markdown("**Hora**")
-            c3.markdown("**Paciente**")
-            c4.markdown("**Veterinario**")
-            c5.markdown("**Motivo**") 
-            c6.markdown("**Acción**")
+            # 3. LÓGICA DE FILTRADO EN PYTHON
+            citas_a_mostrar = []
+            if search_term:
+                search_term = search_term.lower() # Convertimos a minúsculas para facilitar búsqueda
+                for c in todas_citas:
+                    # Buscamos coincidencias en DNI, Nombre Cliente o Nombre Mascota
+                    # Usamos 'or' para que sea flexible
+                    coincide_dni = search_term in c.mascota.cliente.dni.lower()
+                    coincide_cliente = search_term in c.mascota.cliente.nombre.lower()
+                    coincide_mascota = search_term in c.mascota.nombre.lower()
+                    
+                    if coincide_dni or coincide_cliente or coincide_mascota:
+                        citas_a_mostrar.append(c)
+            else:
+                # Si no escriben nada, mostramos todas
+                citas_a_mostrar = todas_citas
+
             st.divider()
 
-            for cita in citas:
-                # Ahora usamos 6 columnas para incluir el Motivo
-                col1, col2, col3, col4, col5, col6 = st.columns([2, 1, 2, 2, 4, 1])
+            # 4. MOSTRAR RESULTADOS
+            if citas_a_mostrar:
+                # Cabecera
+                c1, c2, c3, c4, c5, c6 = st.columns([2, 1, 2, 2, 4, 1])
+                c1.markdown("**Fecha**")
+                c2.markdown("**Hora**")
+                c3.markdown("**Paciente**")
+                c4.markdown("**Veterinario**")
+                c5.markdown("**Motivo**") 
+                c6.markdown("**Acción**")
+                st.divider()
+
+                for cita in citas_a_mostrar:
+                    col1, col2, col3, col4, col5, col6 = st.columns([2, 1, 2, 2, 4, 1])
+                    
+                    col1.write(f"📅 {cita.fecha}")
+                    col2.write(f"⏰ {cita.hora}")
+                    # Añadimos el DNI y Nombre del dueño debajo del nombre de la mascota para referencia rápida
+                    col3.write(f"🐾 **{cita.mascota.nombre}**")
+                    col3.caption(f"Dueño: {cita.mascota.cliente.nombre} ({cita.mascota.cliente.dni})")
+                    
+                    col4.write(f"🩺 {cita.veterinario.nombre}")
+                    col5.info(f"{cita.motivo}")
+                    
+                    # Botón de borrar
+                    if col6.button("❌", key=f"del_cita_{cita.id}", help="Cancelar Cita"):
+                        service.cancelar_cita(cita.id)
+                        st.toast("Cita cancelada correctamente")
+                        st.rerun()
+                    
+                    st.markdown("---")
+            else:
+                st.warning("No se encontraron citas con ese criterio de búsqueda.")
                 
-                col1.write(f"📅 {cita.fecha}")
-                col2.write(f"⏰ {cita.hora}")
-                col3.write(f"🐾 {cita.mascota.nombre}")
-                col4.write(f"🩺 {cita.veterinario.nombre}")
-                col5.info(f"{cita.motivo}") 
-                
-                # Botón de borrar
-                if col6.button("❌", key=f"del_cita_{cita.id}", help="Cancelar Cita"):
-                    service.cancelar_cita(cita.id)
-                    st.toast("Cita cancelada correctamente")
-                    st.rerun()
-                
-                st.markdown("---") # Separador sutil
         else:
-            st.info("No hay citas programadas.")
+            st.info("No hay citas programadas en el sistema.")
