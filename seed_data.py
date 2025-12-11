@@ -3,169 +3,209 @@ import random
 from datetime import date, time, timedelta
 from dotenv import load_dotenv
 
-# Importamos la base de datos y todos los modelos
+# Importamos DB y Modelos
 from app.database import SessionLocal, engine, Base
 from app.models.veterinario import Veterinario
 from app.models.cliente import Cliente
 from app.models.mascota import Mascota
 from app.models.cita import Cita
 from app.models.historial import HistorialMedico
-from app.models.producto import Producto  # <--- IMPORTANTE: Modelo de Productos
+from app.models.producto import Producto
 
-# Cargar variables de entorno
 load_dotenv()
 
-def cargar_datos_prueba():
-    print("🌱 INICIANDO CARGA MASIVA DE DATOS (V2.0)...")
+# --- CONSTANTES PARA GENERACIÓN ALEATORIA ---
+NOMBRES_PERSONAS = ["Laura", "Carlos", "Ana", "David", "Elena", "Jorge", "Sofía", "Miguel", "Lucía", "Pablo", "Marta", "Daniel", "Carmen", "Alejandro", "Paula", "Javier", "Cristina", "Álvaro", "Isabel", "Adrián"]
+APELLIDOS = ["García", "Rodríguez", "López", "Martínez", "Sánchez", "Pérez", "Gómez", "Fernández", "Moreno", "Jiménez", "Ruiz", "Hernández", "Díaz", "Álvarez", "Muñoz"]
+NOMBRES_PERROS = ["Thor", "Luna", "Max", "Nala", "Kira", "Rocky", "Lola", "Zeus", "Coco", "Bimba", "Simba", "Noa", "Bruno", "Dana", "Duke", "Mia", "Jack", "Maya", "Toby", "Duna"]
+NOMBRES_GATOS = ["Garfield", "Luna", "Simba", "Nala", "Pelusa", "Oreo", "Mishifu", "Salem", "Nina", "Loki", "Coco", "Mia", "Felix", "Gris", "Sombra"]
+NOMBRES_OTROS = ["Piolín", "Bugs", "Stuart", "Nemo", "Dory", "Sonic", "Pikachu", "Yoshi", "Rayo", "Manchitas"]
+DIAGNOSTICOS = [
+    ("Otitis externa", "Inflamación del conducto auditivo. Se aplica limpieza y gotas."),
+    ("Gastroenteritis", "Vómitos y diarrea. Dieta blanda y suero."),
+    ("Vacunación Anual", "Aplicación de vacuna polivalente y revisión general."),
+    ("Dermatitis alérgica", "Picores y rojeces. Se prescribe corticoide y cambio de dieta."),
+    ("Revisión Dental", "Acumulación de sarro leve. Se programa limpieza."),
+    ("Cuerpo extraño", "Ha ingerido un juguete. Se realiza radiografía."),
+    ("Conjuntivitis", "Ojos llorosos. Se aplica colirio antibiótico."),
+    ("Control de Peso", "El paciente ha bajado 200g. Evolución favorable.")
+]
 
-    # 1. Obtener contraseñas del .env
+def obtener_telefono():
+    return f"6{random.randint(0,9)}{random.randint(0,9)}{random.randint(100000, 999999)}"
+
+def obtener_dni():
+    return f"{random.randint(10000000, 99999999)}{random.choice('TRWAGMYFPDXBNJZSQVHLCKE')}"
+
+def cargar_datos_prueba():
+    print("🌱 INICIANDO CARGA PROFESIONAL DE DATOS (V4.0 - Agenda Mañana Tarde)...")
+
+    # 1. Seguridad
     pass_admin = os.getenv("ADMIN_PASSWORD")
     pass_house = os.getenv("VET_PASSWORD")
     pass_grey = os.getenv("GREY_PASSWORD")
     pass_dolittle = os.getenv("DOLITTLE_PASSWORD")
 
-    # Validación de seguridad
     if not all([pass_admin, pass_house, pass_grey, pass_dolittle]):
-        print("❌ ERROR DE SEGURIDAD: Faltan contraseñas en el archivo .env")
-        print("ℹ️  Asegúrate de definir: ADMIN_PASSWORD, VET_PASSWORD, GREY_PASSWORD, DOLITTLE_PASSWORD")
+        print("❌ ERROR: Faltan contraseñas en el .env")
         return
 
-    # 2. Reiniciar Base de Datos (Borrón y cuenta nueva)
+    # 2. Reset DB
     try:
         Base.metadata.drop_all(bind=engine)
         Base.metadata.create_all(bind=engine)
-        print("✅ Base de datos limpiada y recreada.")
+        print("✅ Base de datos recreada desde cero.")
     except Exception as e:
-        print(f"❌ Error al reiniciar la DB: {e}")
+        print(f"❌ Error DB: {e}")
         return
 
     session = SessionLocal()
 
     try:
-        # --- 3. CREAR PERSONAL (VETERINARIOS) ---
-        print("👤 Creando equipo médico...")
-        
-        admin = Veterinario(nombre="Admin General", especialidad="Dirección", num_colegiado="admin", password=pass_admin)
+        # --- 3. STAFF MÉDICO ---
+        print("👨‍⚕️ Contratando personal...")
+        admin = Veterinario(nombre="Director General", especialidad="Dirección", num_colegiado="admin", password=pass_admin)
         vet1 = Veterinario(nombre="Dr. Gregory House", especialidad="Diagnóstico", num_colegiado="100", password=pass_house)
         vet2 = Veterinario(nombre="Dra. Meredith Grey", especialidad="Cirugía", num_colegiado="200", password=pass_grey)
         vet3 = Veterinario(nombre="Dr. John Dolittle", especialidad="Exóticos", num_colegiado="300", password=pass_dolittle)
-
-        session.add_all([admin, vet1, vet2, vet3])
-        session.commit() # Commit para generar IDs
-
-        # --- 4. CREAR INVENTARIO (PRODUCTOS) ---
-        print("📦 Llenando el almacén y farmacia...")
         
-        # Productos variados con distinto stock
-        p1 = Producto(nombre="Vacuna Polivalente", categoria="Vacuna", precio=35.00, stock=50)
-        p2 = Producto(nombre="Antibiótico Oral 500mg", categoria="Medicamento Oral", precio=12.50, stock=100)
-        p3 = Producto(nombre="Collar Isabelino (M)", categoria="Accesorio", precio=8.00, stock=15)
-        p4 = Producto(nombre="Suero Fisiológico", categoria="Inyectable", precio=5.00, stock=5) # STOCK BAJO (Alerta Dashboard)
-        p5 = Producto(nombre="Pipeta Antipulgas", categoria="Medicamento Externo", precio=22.00, stock=30)
-
-        session.add_all([p1, p2, p3, p4, p5])
+        vets = [vet1, vet2, vet3]
+        session.add_all([admin] + vets)
         session.commit()
 
-        # --- 5. CREAR CLIENTES Y MASCOTAS (Variedad de especies) ---
-        print("👥 Creando clientes y pacientes...")
-
-        # Cliente 1: Ana con Thor (Perro)
-        c1 = Cliente(dni="1111A", nombre="Ana García", telefono="600111222")
-        m1 = Mascota(nombre="Thor", especie="Perro")
-        c1.mascotas.append(m1)
-
-        # Cliente 2: Luis con Garfield (Gato) y Odie (Perro)
-        c2 = Cliente(dni="2222B", nombre="Luis Gómez", telefono="600333444")
-        m2_a = Mascota(nombre="Garfield", especie="Gato")
-        m2_b = Mascota(nombre="Odie", especie="Perro")
-        c2.mascotas.extend([m2_a, m2_b])
-
-        # Cliente 3: María con Piolín (Ave)
-        c3 = Cliente(dni="3333C", nombre="María López", telefono="600555666")
-        m3 = Mascota(nombre="Piolín", especie="Ave")
-        c3.mascotas.append(m3)
-
-        # Cliente 4: Carlos con Rocky (Perro) y Bugs (Roedor)
-        c4 = Cliente(dni="4444D", nombre="Carlos Ruiz", telefono="600777888")
-        m4_a = Mascota(nombre="Rocky", especie="Perro")
-        m4_b = Mascota(nombre="Bugs", especie="Roedor")
-        c4.mascotas.extend([m4_a, m4_b])
+        # --- 4. INVENTARIO FARMACÉUTICO ---
+        print("📦 Abasteciendo farmacia y almacén...")
+        productos_lista = [
+            Producto(nombre="Nobivac Rabia", categoria="Vacuna", precio=25.00, stock=45),
+            Producto(nombre="Eurican Polivalente", categoria="Vacuna", precio=35.50, stock=30),
+            Producto(nombre="Feligen (Gatos)", categoria="Vacuna", precio=28.00, stock=20),
+            Producto(nombre="Amoxicilina 500mg", categoria="Medicamento Oral", precio=12.50, stock=100),
+            Producto(nombre="Meloxicam (Antiinf.)", categoria="Medicamento Oral", precio=15.00, stock=80),
+            Producto(nombre="Prednisona", categoria="Medicamento Oral", precio=8.50, stock=60),
+            Producto(nombre="Suero Fisiológico 500ml", categoria="Inyectable", precio=6.00, stock=8),
+            Producto(nombre="Apomorphina", categoria="Inyectable", precio=18.00, stock=5),
+            Producto(nombre="Pipeta Frontline (S)", categoria="Medicamento Externo", precio=22.00, stock=25),
+            Producto(nombre="Collar Scalibor", categoria="Accesorio", precio=28.00, stock=15),
+            Producto(nombre="Bravecto Masticable", categoria="Medicamento Oral", precio=32.00, stock=40),
+            Producto(nombre="Collar Isabelino (M)", categoria="Accesorio", precio=8.00, stock=12),
+            Producto(nombre="Venda Cohesiva", categoria="Accesorio", precio=3.50, stock=50),
+            Producto(nombre="Royal Canin Gastro Intestinal", categoria="Alimentación", precio=45.00, stock=10),
+            Producto(nombre="Hill's Prescription Diet", categoria="Alimentación", precio=48.00, stock=6)
+        ]
+        session.add_all(productos_lista)
+        session.commit()
         
-        # Cliente 5: Elena con Stuart (Roedor)
-        c5 = Cliente(dni="5555E", nombre="Elena White", telefono="600999000")
-        m5 = Mascota(nombre="Stuart", especie="Roedor")
-        c5.mascotas.append(m5)
+        todos_productos = session.query(Producto).all()
 
-        session.add_all([c1, c2, c3, c4, c5])
+        # --- 5. GENERACIÓN MASIVA DE CLIENTES Y MASCOTAS ---
+        print("👥 Registrando base de datos de clientes...")
+        
+        clientes_generados = []
+        for _ in range(30): # 30 Clientes
+            nombre = f"{random.choice(NOMBRES_PERSONAS)} {random.choice(APELLIDOS)}"
+            c = Cliente(dni=obtener_dni(), nombre=nombre, telefono=obtener_telefono())
+            
+            num_mascotas = random.choices([1, 2], weights=[80, 20])[0]
+            
+            for _ in range(num_mascotas):
+                tipo = random.choices(["Perro", "Gato", "Exótico"], weights=[55, 35, 10])[0]
+                
+                if tipo == "Perro":
+                    nombre_m = random.choice(NOMBRES_PERROS)
+                    especie = "Perro"
+                elif tipo == "Gato":
+                    nombre_m = random.choice(NOMBRES_GATOS)
+                    especie = "Gato"
+                else:
+                    nombre_m = random.choice(NOMBRES_OTROS)
+                    especie = random.choice(["Ave", "Roedor", "Reptil"])
+                
+                m = Mascota(nombre=nombre_m, especie=especie)
+                c.mascotas.append(m)
+            
+            clientes_generados.append(c)
+        
+        session.add_all(clientes_generados)
         session.commit()
 
-        # Recuperamos objetos frescos para usar sus IDs en citas
-        # Nota: Usamos query para asegurar que están vinculados a la sesión actual
-        vet1 = session.query(Veterinario).filter_by(num_colegiado="100").first()
-        vet2 = session.query(Veterinario).filter_by(num_colegiado="200").first()
-        vet3 = session.query(Veterinario).filter_by(num_colegiado="300").first()
-        
-        prod_vacuna = session.query(Producto).filter_by(nombre="Vacuna Polivalente").first()
-        prod_ab = session.query(Producto).filter_by(nombre="Antibiótico Oral 500mg").first()
+        todas_mascotas = session.query(Mascota).all()
 
-        # --- 6. GENERAR CITAS (AGENDA) ---
-        print("📅 Generando agenda de citas...")
+        # --- 6. HISTORIAL MÉDICO (PASADO) ---
+        print("📜 Digitalizando expedientes antiguos...")
         
-        lista_citas = []
+        historiales = []
+        for _ in range(60): # 60 Consultas pasadas
+            mascota = random.choice(todas_mascotas)
+            vet = random.choice(vets)
+            
+            dias_atras = random.randint(1, 120)
+            fecha_consulta = date.today() - timedelta(days=dias_atras)
+            
+            diag_titulo, diag_desc = random.choice(DIAGNOSTICOS)
+            
+            h = HistorialMedico(
+                fecha=fecha_consulta,
+                diagnostico=diag_titulo,
+                descripcion=diag_desc,
+                id_mascota=mascota.id,
+                id_veterinario=vet.id
+            )
+            
+            num_prods = random.randint(0, 2)
+            if num_prods > 0:
+                prods_usados = random.sample(todos_productos, num_prods)
+                for p in prods_usados:
+                    h.productos_utilizados.append(p)
+                    if p.stock > 0: p.stock -= 1
+            
+            historiales.append(h)
+        
+        session.add_all(historiales)
+        session.commit()
+
+        # --- 7. AGENDA DE CITAS (MODIFICADO: EMPIEZA MAÑANA TARDE) ---
+        print("📅 Organizando la agenda (Inicio: Mañana por la tarde)...")
+        
+        citas = []
         hoy = date.today()
         manana = hoy + timedelta(days=1)
-        pasado = hoy + timedelta(days=2)
-
-        # Citas HOY (Para activar contadores del Dashboard)
-        lista_citas.append(Cita(fecha=hoy, hora=time(9,0), motivo="Vacunación Anual", id_mascota=m1.id, id_veterinario=vet1.id))
-        lista_citas.append(Cita(fecha=hoy, hora=time(10,30), motivo="Revisión Cirugía", id_mascota=m4_a.id, id_veterinario=vet2.id))
-        lista_citas.append(Cita(fecha=hoy, hora=time(12,0), motivo="Pico inflamado", id_mascota=m3.id, id_veterinario=vet3.id))
-        lista_citas.append(Cita(fecha=hoy, hora=time(16,0), motivo="Chequeo General", id_mascota=m2_a.id, id_veterinario=vet1.id))
-
-        # Citas FUTURAS
-        lista_citas.append(Cita(fecha=manana, hora=time(11,0), motivo="Esterilización", id_mascota=m2_b.id, id_veterinario=vet2.id))
-        lista_citas.append(Cita(fecha=pasado, hora=time(17,0), motivo="Revisión dientes", id_mascota=m5.id, id_veterinario=vet3.id))
-
-        session.add_all(lista_citas)
-
-        # --- 7. HISTORIAL MÉDICO CON PRODUCTOS ---
-        print("📜 Generando historiales médicos y consumiendo stock...")
         
-        # Historial 1: Thor se puso una vacuna
-        h1 = HistorialMedico(
-            fecha=hoy - timedelta(days=30),
-            diagnostico="Sano - Vacunación correcta",
-            descripcion="Se aplica vacuna anual. El paciente reacciona bien.",
-            id_mascota=m1.id,
-            id_veterinario=vet1.id
-        )
-        # Aquí simulamos que se usó un producto en el pasado
-        h1.productos_utilizados.append(prod_vacuna)
+        # A. CITAS DE MAÑANA (Solo Tarde)
+        # Definimos horas específicas empezando a las 16:00
+        horas_tarde_manana = [time(16,0), time(16,30), time(17,0), time(17,45), time(18,15), time(19,0)]
         
-        # Historial 2: Garfield con infección
-        h2 = HistorialMedico(
-            fecha=hoy - timedelta(days=7),
-            diagnostico="Infección leve",
-            descripcion="Se prescribe antibiótico durante 5 días.",
-            id_mascota=m2_a.id,
-            id_veterinario=vet1.id
-        )
-        h2.productos_utilizados.append(prod_ab)
+        for hora in horas_tarde_manana:
+            m = random.choice(todas_mascotas)
+            v = random.choice(vets)
+            motivo = random.choice(["Revisión de tarde", "Vacuna", "Urgencia leve", "Consulta general"])
+            # Añadimos la cita para MAÑANA
+            citas.append(Cita(fecha=manana, hora=hora, motivo=motivo, id_mascota=m.id, id_veterinario=v.id))
+            
+        # B. CITAS DEL RESTO DE LA SEMANA (Pasado mañana en adelante)
+        for i in range(2, 8): # Desde pasado mañana hasta dentro de 7 días
+            dia = hoy + timedelta(days=i)
+            # Generamos entre 3 y 6 citas aleatorias por día
+            for _ in range(random.randint(3, 6)):
+                m = random.choice(todas_mascotas)
+                v = random.choice(vets)
+                # Horario aleatorio comercial (9:00 a 19:30)
+                h = time(random.randint(9, 19), random.choice([0, 30]))
+                citas.append(Cita(fecha=dia, hora=h, motivo="Consulta programada", id_mascota=m.id, id_veterinario=v.id))
 
-        session.add_all([h1, h2])
+        session.add_all(citas)
         session.commit()
 
-        print("✅ ¡TODO LISTO! Base de datos cargada con éxito.")
+        print("✅ ¡CARGA PROFESIONAL COMPLETADA!")
+        print("📊 Estadísticas:")
+        print(f"   - {len(clientes_generados)} Clientes")
+        print(f"   - {len(todas_mascotas)} Pacientes")
+        print(f"   - {len(historiales)} Historiales")
+        print(f"   - {len(citas)} Citas Futuras (Empiezan mañana a las 16:00)")
         print("-" * 60)
-        print("ℹ️  RESUMEN DE ACCESO (Contraseñas en tu archivo .env):")
-        print("   1. Admin:    admin")
-        print("   2. House:    100")
-        print("   3. Grey:     200")
-        print("   4. Dolittle: 300")
-        print("-" * 60)
+        print("ℹ️  Nota: Al no haber citas 'HOY', el Dashboard mostrará 0 en 'Citas Hoy'.")
 
     except Exception as e:
-        print(f"❌ Ocurrió un error inesperado: {e}")
+        print(f"❌ Error fatal: {e}")
         session.rollback()
     finally:
         session.close()
